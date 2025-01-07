@@ -4,26 +4,28 @@ import { useEffect, useState } from "react";
 import Chat from './Chat';
 
 const Nav = () => {
-  const [spotifyToken, setSpotifyToken] = useState<string | null>(null);
+  // const [spotifyToken, setSpotifyToken] = useState<string | null>(null);
   const [accountMode, setAccountMode] = useState<string | null>(null)
   const baseUrl = 'http://localhost:3000';
 
-  const setAccount = (w, mode) => {
-    const url = new URL(w.location.href);
-    url.searchParams.set('account_mode', mode);
-    window.history.replaceState({}, '', url);
+  const setAccount = (mode) => {
+    localStorage.setItem('accountMode', mode);
+    // const url = new URL(w.location.href);
+    // url.searchParams.set('account_mode', mode);
+    // window.history.replaceState({}, '', url);
     setAccountMode(mode);
   }
 
   useEffect(() => {
     // Check local storage for an existing spotifyToken
     const spotifyAccessToken = localStorage.getItem("spotifyAccessToken");
+
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
     window.history.replaceState(null, '', baseUrl);
 
-    if (!spotifyAccessToken) {
-      if (code) {
+    if (localStorage.getItem('accountMode') == 'spotify') {
+      if (!localStorage.getItem("spotifyAccessToken")) {
         // Exchange the code for an access spotifyToken
         fetch('/api/spotify', {
           method: 'POST',
@@ -34,36 +36,34 @@ const Nav = () => {
           .then(data => {
             if (data.spotifyAccessToken) {
               localStorage.setItem("spotifyAccessToken", data.spotifyAccessToken);
-              setSpotifyToken(data.spotifyAccessToken);
-              setAccount(window, 'spotify');
+              setAccount('spotify');
             }
           })
           .catch(error => console.error("Failed to retrieve spotifyAccessToken:", error));
       }
+      else {
+        if (!localStorage.getItem('spotifyTopItems')) {
+          fetch('/api/spotify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ accessToken: localStorage.getItem('spotifyAccessToken'), reqReason: 'fetchTop' })
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (data) {
+                console.log(data);
+                localStorage.setItem("spotifyTopItems", JSON.stringify(data));
+              }
+            })
+            .catch(error => console.error("Failed to retrieve user top items:", error));
+        }
+      }
     }
-  }, []);
-
-  // This useEffect will run when spotifyToken changes, fetching top items when the token is available
-  useEffect(() => {
-    if (spotifyToken && !localStorage.getItem("spotifyTopItems")) {
-      fetch('/api/spotify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ accessToken: spotifyToken, reqReason: 'fetchTop' })
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data) {
-            console.log(data);
-            localStorage.setItem("spotifyTopItems", JSON.stringify(data));
-          }
-        })
-        .catch(error => console.error("Failed to retrieve user top items:", error));
-    }
-  }, [spotifyToken]);
+  });
 
   const handleSpotifyButton = async () => {
-    if (!spotifyToken) {
+    setAccount('spotify');
+    if (!localStorage.getItem('spotifyAccessToken')) {
       const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
       const redirectUri = process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI;
       const authorizeUrl = process.env.NEXT_PUBLIC_SPOTIFY_AUTHORIZE_URL;    
@@ -80,12 +80,13 @@ const Nav = () => {
       // Redirect to Spotify authorization URL
       window.location.href = url.toString();
     } else {
-      setAccount(window, 'spotify');
+      location.reload();
     }
   };
 
   const handleAppleMusicButton = async () => {
-    setAccount(window, 'applemusic');
+    setAccount('applemusic');
+    location.reload();
   }
 
   return (
@@ -110,7 +111,6 @@ const Nav = () => {
 
       {/* Buttons on the right */}
       <div className="absolute right-0 flex items-center justify-center space-x-6 pr-6">
-        {/* Conditionally Rendered Button */}
         <button 
           onClick={handleSpotifyButton} 
           className="flex items-center justify-center rounded-full bg-spotify-green hover:bg-spotify-green-dark transition duration-500"

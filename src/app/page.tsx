@@ -8,9 +8,10 @@ import SpotifyTopItems from './components/SpotifyTopItems';
 const Page = () => {
 
   const [safeToRenderSpotify, setSafeToRenderSpotify] = useState(false);
-  const [accountMode, setAccountMode] = useState<string | null>('spotify');
+  const [accountMode, setAccountMode] = useState<string | null>(null);
 
   useEffect(() => {
+    setAccountMode(localStorage.getItem('accountMode'));
     // Function to check for the presence of spotifyTopItems in localStorage
     const checkSpotifyTopItems = () => {
       const storedTopItems = localStorage.getItem("spotifyTopItems");
@@ -26,12 +27,12 @@ const Page = () => {
 
     // Clean up the interval when the component is unmounted
     return () => clearInterval(interval);
-  }, []);
+  });
 
   return (
     <div>
       <Nav/>
-      {safeToRenderSpotify && accountMode == 'spotify' && <SpotifyTopItems/>}
+      {localStorage.getItem('accountMode') == 'spotify' && safeToRenderSpotify && <SpotifyTopItems/>}
     </div>
   );
 };
