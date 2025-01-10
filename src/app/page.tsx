@@ -7,6 +7,13 @@ import SpotifyTopItems from './components/SpotifyTopItems';
 
 const Page = () => {
 
+  // TODO:
+  // I want to get the popularity of all the songs and all the artists
+  // Give a humanized comment about how popular the music they listen to is using AI
+  // For any overlap between song and artist, compare relative popularity of song vs artist
+  // -- Could tell user if they are a "surface-level" fan of the artist
+  // Use metadata to make AI "make fun of" the user
+
   const [safeToRenderSpotify, setSafeToRenderSpotify] = useState(false);
   const [accountMode, setAccountMode] = useState<string | null>(null);
 

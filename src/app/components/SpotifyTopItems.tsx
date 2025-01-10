@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Commentary from "./Commentary";
 
 const SpotifyTopItems = () => {
   const [topSongs, setTopSongs] = useState<any[]>([]);
@@ -20,7 +21,7 @@ const SpotifyTopItems = () => {
   };
 
   return (
-    <div className="flex justify-end space-x-16 w-full bg-spotify-gray">
+    <div className="flex justify-left space-x-16 w-full bg-spotify-gray">
         {/* Top Songs List */}
         <div className="w-1/4">
           <ul className="space-y-1">
@@ -67,6 +68,9 @@ const SpotifyTopItems = () => {
             </li>
           ))}
         </ul>
+      </div>
+      <div className="flex justify-center w-1/3">
+        <Commentary/>
       </div>
     </div>
   );
