@@ -12,20 +12,23 @@ const Page = () => {
 
   useEffect(() => {
     setAccountMode(localStorage.getItem('accountMode'));
-    // Function to check for the presence of spotifyTopItems in localStorage
-    const checkSpotifyTopItems = () => {
-      const storedTopItems = localStorage.getItem("spotifyTopItems");
-      setSafeToRenderSpotify(!!storedTopItems);
+
+    const checkAccountMode = () => {
+      const account = localStorage.getItem("accountMode");
+      setSafeToRenderSpotify(account == 'spotify');
+      return account
     };
 
-    checkSpotifyTopItems();
+    const getSpotifyTopItems = () => {
+      const storedTopItems = localStorage.getItem("spotifyTopItems");
+    };
 
-    // Set up an interval to check for changes in localStorage
     const interval = setInterval(() => {
-      checkSpotifyTopItems(); 
-    }, 100);
+      if (checkAccountMode() == 'spotify') {
+        getSpotifyTopItems();
+      }
+    }, 500);
 
-    // Clean up the interval when the component is unmounted
     return () => clearInterval(interval);
   });
 

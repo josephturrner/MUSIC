@@ -5,15 +5,10 @@ import Chat from './Chat';
 
 const Nav = () => {
   // const [spotifyToken, setSpotifyToken] = useState<string | null>(null);
-  const [accountMode, setAccountMode] = useState<string | null>(null)
   const baseUrl = 'http://localhost:3000';
 
   const setAccount = (mode) => {
     localStorage.setItem('accountMode', mode);
-    // const url = new URL(w.location.href);
-    // url.searchParams.set('account_mode', mode);
-    // window.history.replaceState({}, '', url);
-    setAccountMode(mode);
   }
 
   useEffect(() => {
@@ -76,17 +71,17 @@ const Nav = () => {
         show_dialog: 'true',
         scope: 'user-read-private user-read-email user-read-playback-state user-top-read'
       }).toString();
+
+
       
       // Redirect to Spotify authorization URL
       window.location.href = url.toString();
     } else {
-      location.reload();
     }
   };
 
   const handleAppleMusicButton = async () => {
     setAccount('applemusic');
-    location.reload();
   }
 
   return (
@@ -101,7 +96,6 @@ const Nav = () => {
           style={{ width: '4rem', height: '4rem' }}
           className="object-fill"
         />
-        <Chat/>
       </div>
 
       {/* Title in the center */}
