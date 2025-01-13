@@ -71,12 +71,9 @@ const Nav = () => {
         show_dialog: 'true',
         scope: 'user-read-private user-read-email user-read-playback-state user-top-read'
       }).toString();
-
-
       
       // Redirect to Spotify authorization URL
       window.location.href = url.toString();
-    } else {
     }
   };
 

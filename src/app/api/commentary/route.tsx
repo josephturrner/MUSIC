@@ -30,8 +30,8 @@ Some example context:
 
 
 // src/app/api/commentary/route.tsx
-export async function POST(request) {
-    const data = await request.json();
+export async function POST(req) {
+    const {topItems} = await req.json();
   
     return NextResponse.json(
         { message: 'User Data Received' },
