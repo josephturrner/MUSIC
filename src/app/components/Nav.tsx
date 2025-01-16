@@ -7,57 +7,7 @@ const Nav = () => {
   // const [spotifyToken, setSpotifyToken] = useState<string | null>(null);
   const baseUrl = 'http://localhost:3000';
 
-  const setAccount = (mode) => {
-    localStorage.setItem('accountMode', mode);
-  }
-
-  useEffect(() => {
-    // Check local storage for an existing spotifyToken
-    const spotifyAccessToken = localStorage.getItem("spotifyAccessToken");
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-    window.history.replaceState(null, '', baseUrl);
-
-    if (localStorage.getItem('accountMode') == 'spotify') {
-      if (!localStorage.getItem("spotifyAccessToken")) {
-        // Exchange the code for an access spotifyToken
-        fetch('/api/spotify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code, reqReason: 'auth' })
-        })
-          .then(res => res.json())
-          .then(data => {
-            if (data.spotifyAccessToken) {
-              localStorage.setItem("spotifyAccessToken", data.spotifyAccessToken);
-              setAccount('spotify');
-            }
-          })
-          .catch(error => console.error("Failed to retrieve spotifyAccessToken:", error));
-      }
-      else {
-        if (!localStorage.getItem('spotifyTopItems')) {
-          fetch('/api/spotify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ accessToken: localStorage.getItem('spotifyAccessToken'), reqReason: 'fetchTop' })
-          })
-            .then(res => res.json())
-            .then(data => {
-              if (data) {
-                console.log(data);
-                localStorage.setItem("spotifyTopItems", JSON.stringify(data));
-              }
-            })
-            .catch(error => console.error("Failed to retrieve user top items:", error));
-        }
-      }
-    }
-  });
-
   const handleSpotifyButton = async () => {
-    setAccount('spotify');
     if (!localStorage.getItem('spotifyAccessToken')) {
       const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
       const redirectUri = process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI;
@@ -76,10 +26,6 @@ const Nav = () => {
       window.location.href = url.toString();
     }
   };
-
-  const handleAppleMusicButton = async () => {
-    setAccount('applemusic');
-  }
 
   return (
     <nav className="flex w-full h-20 relative justify-center items-center bg-spotify-black text-off-white">
@@ -115,19 +61,6 @@ const Nav = () => {
             style={{ height: '3rem', width: '3rem' }}
           />
         </button>
-        <button
-            onClick={handleAppleMusicButton}
-            className="flex items-center justify-center rounded-lg bg-apple-pink hover:bg-apple-pink-dark transition duration-500"
-            style={{ height: '3.5rem', width: '3.5rem' }}
-          >
-            <Image 
-              src="/images/applemusic-logo.svg"
-              alt=""
-              width={500}
-              height={500}
-              style={{ height: '3rem', width: '3rem' }}
-            />
-          </button>
       </div>
     </nav>
   );    

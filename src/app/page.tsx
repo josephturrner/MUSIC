@@ -15,34 +15,88 @@ const Page = () => {
   // Use metadata to make AI "make fun of" the user
 
   const [safeToRenderSpotify, setSafeToRenderSpotify] = useState(false);
-  const [accountMode, setAccountMode] = useState<string | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const baseUrl = 'http://localhost:3000';
+
 
   useEffect(() => {
-    setAccountMode(localStorage.getItem('accountMode'));
+    // Check local storage for an existing spotifyToken
+    const spotifyAccessToken = localStorage.getItem("spotifyAccessToken");
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    window.history.replaceState(null, '', baseUrl);
 
-    const checkAccountMode = () => {
-      const account = localStorage.getItem("accountMode");
-      setSafeToRenderSpotify(account == 'spotify');
-      return account
-    };
-
-    const getSpotifyTopItems = () => {
-      const storedTopItems = localStorage.getItem("spotifyTopItems");
-    };
-
-    const interval = setInterval(() => {
-      if (checkAccountMode() == 'spotify') {
-        getSpotifyTopItems();
-      }
-    }, 500);
-
-    return () => clearInterval(interval);
+    if (!(!!localStorage.getItem("spotifyAccessToken"))) {
+      // Exchange the code for an access spotifyToken
+      fetch('/api/spotify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, reqReason: 'auth' })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.spotifyAccessToken) {
+            localStorage.setItem("spotifyAccessToken", data.spotifyAccessToken);
+            setAccessToken(data.spotifyAccessToken);
+          }
+        })
+        .catch(error => console.error("Failed to retrieve spotifyAccessToken:", error));
+    } else {
+      setAccessToken(localStorage.getItem("spotifyAccessToken"));
+    }
   });
+
+  useEffect(() => {
+    if (accessToken) {
+      fetch('/api/spotify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ accessToken: accessToken, reqReason: 'fetchTop' })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data) {
+            localStorage.setItem("spotifyTopItems", JSON.stringify(data));
+            setSafeToRenderSpotify(true);
+          }
+        })
+        .catch(error => console.error("Failed to retrieve user top items:", error));
+    }
+
+  })
+
+  // useEffect(() => {
+
+  //   const getSpotifyTopItems = () => {
+  //     fetch('/api/spotify', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({ accessToken: localStorage.getItem('spotifyAccessToken'), reqReason: 'fetchTop' })
+  //     })
+  //       .then(res => res.json())
+  //       .then(data => {
+  //         if (data) {
+  //           console.log(data);
+  //           localStorage.setItem("spotifyTopItems", JSON.stringify(data));
+  //         }
+  //       })
+  //       .catch(error => console.error("Failed to retrieve user top items:", error));
+  //   };
+
+  //   const interval = setInterval(() => {
+  //     if (!(!!localStorage.getItem("spotifyTopItems"))) {
+  //       getSpotifyTopItems();
+  //       setSafeToRenderSpotify(true);
+  //     }
+  //   }, 500);
+
+  //   return () => clearInterval(interval);
+  // }, [accessToken]);
 
   return (
     <div>
       <Nav/>
-      {localStorage.getItem('accountMode') == 'spotify' && safeToRenderSpotify && <SpotifyTopItems/>}
+      {safeToRenderSpotify && <SpotifyTopItems/>}
     </div>
   );
 };

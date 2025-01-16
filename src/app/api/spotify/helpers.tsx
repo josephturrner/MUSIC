@@ -13,7 +13,7 @@ async function FetchSpotifyTracks(accessToken, num, term) {
             time_range: `${term}_term`
         })}`;
 
-        console.log(targetUrl);
+        console.log(targetUrl, accessToken);
 
         // Fetch top tracks
         const topTracksResponse = await fetch(targetUrl, {

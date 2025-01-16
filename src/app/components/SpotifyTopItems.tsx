@@ -10,8 +10,8 @@ const SpotifyTopItems = () => {
     const storedTopItems = localStorage.getItem("spotifyTopItems");
 
     if (storedTopItems) {
-        setTopArtists((JSON.parse(storedTopItems)).topArtists);
-        setTopSongs((JSON.parse(storedTopItems)).topTracks);
+      setTopArtists((JSON.parse(storedTopItems)).topArtists);
+      setTopSongs((JSON.parse(storedTopItems)).topTracks);
     }
   }, []);
 
