@@ -14,8 +14,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "SoundSphere",
-  description: "Music Hub",
+  title: "MusIQ",
+  description: "What your music says about you",
 };
 
 export default function RootLayout({

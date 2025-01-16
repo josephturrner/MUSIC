@@ -21,7 +21,7 @@ const SpotifyTopItems = () => {
   };
 
   return (
-    <div className="flex justify-left space-x-16 w-full bg-spotify-gray">
+    <div className="flex justify-center space-x-16 w-full bg-spotify-gray">
         {/* Top Songs List */}
         <div className="w-1/4">
           <ul className="space-y-1">
@@ -69,7 +69,7 @@ const SpotifyTopItems = () => {
           ))}
         </ul>
       </div>
-      <div className="flex justify-center w-1/3">
+      <div className="flex-col items-center justify-center w-1/4">
         <Commentary/>
       </div>
     </div>

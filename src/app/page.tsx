@@ -65,34 +65,6 @@ const Page = () => {
 
   })
 
-  // useEffect(() => {
-
-  //   const getSpotifyTopItems = () => {
-  //     fetch('/api/spotify', {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({ accessToken: localStorage.getItem('spotifyAccessToken'), reqReason: 'fetchTop' })
-  //     })
-  //       .then(res => res.json())
-  //       .then(data => {
-  //         if (data) {
-  //           console.log(data);
-  //           localStorage.setItem("spotifyTopItems", JSON.stringify(data));
-  //         }
-  //       })
-  //       .catch(error => console.error("Failed to retrieve user top items:", error));
-  //   };
-
-  //   const interval = setInterval(() => {
-  //     if (!(!!localStorage.getItem("spotifyTopItems"))) {
-  //       getSpotifyTopItems();
-  //       setSafeToRenderSpotify(true);
-  //     }
-  //   }, 500);
-
-  //   return () => clearInterval(interval);
-  // }, [accessToken]);
-
   return (
     <div>
       <Nav/>
